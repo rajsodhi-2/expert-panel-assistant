@@ -1,0 +1,17 @@
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+*.egg-info/
+
+# CrewAI
+panel_response.md
+*.log
+
+# IDE
+.vscode/
+.idea/

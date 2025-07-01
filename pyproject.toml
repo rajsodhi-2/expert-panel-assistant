@@ -1,0 +1,23 @@
+[project]
+name = "expert_panel_assistant"
+version = "0.1.0"
+description = "expert_panel_assistant using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[tools]>=0.134.0,<1.0.0"
+]
+
+[project.scripts]
+expert_panel_assistant = "expert_panel_assistant.main:run"
+run_crew = "expert_panel_assistant.main:run"
+train = "expert_panel_assistant.main:train"
+replay = "expert_panel_assistant.main:replay"
+test = "expert_panel_assistant.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"
