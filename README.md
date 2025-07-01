@@ -39,12 +39,26 @@ crewai install
 ```
 
 ### Environment Setup
-**Add your `OPENAI_API_KEY` into the `.env` file**
+
+**Configure your LLM and API keys in the `.env` file:**
 
 ```bash
 # .env
+# Single variable controls the LLM for all agents
+LLM_MODEL=anthropic/claude-3-5-haiku-latest
+
+# API Keys (add the one for your chosen LLM provider)
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 ```
+
+**Supported LLM Options:**
+- `anthropic/claude-3-5-haiku-latest` (fast, cost-effective)
+- `anthropic/claude-3-5-sonnet-20240620` (balanced performance)
+- `openai/gpt-4` (high quality)
+- `openai/gpt-3.5-turbo` (budget-friendly)
+
+> 💡 **Tip**: Change the `LLM_MODEL` variable to instantly switch all agents to a different model. See `LLM_CONFIGURATION.md` for detailed options.
 
 ## 🚀 Running the Project
 

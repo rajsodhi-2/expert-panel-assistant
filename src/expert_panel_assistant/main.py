@@ -161,7 +161,7 @@ def display_results(result: Any) -> None:
 
 def run():
     """
-    Run the expert panel crew with dynamic routing based on router task output.
+    Run the expert panel crew with intelligent content analysis and expert selection.
     """
     try:
         # Get email content from user
@@ -169,27 +169,20 @@ def run():
         
         print(f"\n📧 Processing email ({len(email_content)} characters)...")
         
-        # Prepare inputs
+        # Prepare inputs for the crew
         inputs = {
             'email': email_content,
             'timestamp': datetime.now().isoformat(),
             'current_year': str(datetime.now().year)
         }
         
-        # Step 1: Run routing task to determine which experts to engage
+        # Step 1: Create expert panel and analyze content for routing
         print("🔍 Analyzing content and selecting relevant experts...")
         expert_panel = ExpertPanelAssistant()
         
-        # Create a minimal crew with just the router for initial analysis
-        router_agent = expert_panel.router()
-        route_task = expert_panel.route_task()
-        
-        # Run the routing task
-        print("🧠 Router analyzing email content...")
-        router_result = route_task.execute_sync(agent=router_agent, context=inputs)
-        
-        # Parse the router output to get selected experts
-        selected_experts = parse_expert_names(router_result)
+        # For now, use a simple content-based routing approach
+        # This could be enhanced with LLM-based routing in the future
+        selected_experts = simple_content_routing(email_content)
         
         # Display routing results
         display_routing_results(selected_experts)
@@ -218,6 +211,41 @@ def run():
             print("Full traceback:")
             traceback.print_exc()
         sys.exit(1)
+
+def simple_content_routing(email_content: str) -> List[str]:
+    """
+    Simple content-based routing to select appropriate experts.
+    This analyzes keywords in the email to determine relevance.
+    """
+    content_lower = email_content.lower()
+    selected_experts = []
+    
+    # Keyword mapping for expert selection
+    expert_keywords = {
+        "simon_sinek": ["leadership", "vision", "purpose", "inspire", "motivation", "culture", "values", "why"],
+        "julie_zhuo": ["team", "scaling", "management", "growth", "dynamics", "communication", "people", "hiring"],
+        "satya_nadella": ["transformation", "innovation", "technology", "digital", "cloud", "ai", "partnership", "enterprise"],
+        "roger_martin": ["strategy", "market", "competition", "positioning", "investment", "growth", "decision", "analysis"],
+        "chris_voss": ["negotiation", "deal", "agreement", "conflict", "persuasion", "pricing", "customer", "partnership"]
+    }
+    
+    # Score each expert based on keyword matches
+    expert_scores = {}
+    for expert, keywords in expert_keywords.items():
+        score = sum(1 for keyword in keywords if keyword in content_lower)
+        if score > 0:
+            expert_scores[expert] = score
+    
+    # Select top 3 experts by score
+    sorted_experts = sorted(expert_scores.items(), key=lambda x: x[1], reverse=True)
+    selected_experts = [expert for expert, score in sorted_experts[:3]]
+    
+    # If no keywords matched, use default experts
+    if not selected_experts:
+        print("⚠️  No specific expertise keywords found. Using balanced expert panel.")
+        selected_experts = ["simon_sinek", "julie_zhuo", "roger_martin"]
+    
+    return selected_experts
 
 def run_with_sample():
     """
@@ -250,11 +278,11 @@ def run_with_sample():
         # Create the expert panel instance
         expert_panel = ExpertPanelAssistant()
         
-        # For demo purposes, select some experts
-        # In a real implementation, you'd run the router first to determine this
-        selected_experts = ["simon_sinek", "julie_zhuo", "roger_martin"]
+        # Analyze sample content for expert selection
+        selected_experts = simple_content_routing(inputs['email'])
         
         print(f"🎯 Selected experts: {selected_experts}")
+        display_routing_results(selected_experts)
         
         # Create dynamic crew with selected experts
         print("🚀 Creating dynamic crew...")
@@ -266,7 +294,7 @@ def run_with_sample():
         
         print("✅ Expert panel analysis complete!")
         print(f"📄 Full response saved to: panel_response.md")
-        print(f"🎯 Result: {result}")
+        display_results(result)
         
     except Exception as e:
         print(f"❌ An error occurred while running the sample: {e}")
